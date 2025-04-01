@@ -1,0 +1,516 @@
+---
+title: "Module 6: Correlation Mining"
+subtitle: "Conceptual Overview"
+format:
+  revealjs: 
+    slide-number: c/t
+    progress: true
+    chalkboard: 
+      buttons: false
+    preview-links: auto
+    logo: images/LASERLogoB.png
+    theme: [default, css/laser.scss]
+    width: 1920
+    height: 1080
+    margin: 0.05
+    footer: <a href=https://www.go.ncsu.edu/laser-institute>go.ncsu.edu/laser-institute
+resources:
+  - demo.pdf
+bibliography: lit/references.bib
+editor: visual
+csl: apa/apa-6th-edition.csl
+title-slide-attributes: 
+  data-notes: Today we are going to discuss memory algorithms.
+---
+
+## Correlation Mining
+
+-   Perhaps the simplest form of relationship mining
+
+-   Finding substantial correlations between variables
+
+-   In a large set of variables
+
+## What’s a correlation?
+
+## Linear correlation (Pearson’s correlation)
+
+-   r(A,B) =
+
+-   When A’s value changes, does B change in the same direction?
+
+-   Assumes a linear relationship
+
+## What is a “good correlation”?
+
+-   1.0 – perfect
+
+-   0.0 – none
+
+-   -1.0 – perfectly negatively correlated
+
+-   In between – depends on the field
+
+## What is a “good correlation”?
+
+-   1.0 – perfect
+
+-   0.0 – none
+
+-   -1.0 – perfectly negatively correlated
+
+-   In between – depends on the field
+
+-   In physics – correlation of 0.8 is weak!
+
+-   In education – correlation of 0.3 is good
+
+## Why are small correlations OK in education?
+
+-   Lots and lots of factors contribute to just about any dependent measure
+
+## Examples of correlation values
+
+![](images/clipboard-3082786640.png)From Denis Boigelot, available on Wikipedia
+
+## Same correlation, different functions
+
+![](images/clipboard-392105844.png)
+
+Anscombe’s Quartet
+
+## r^2^
+
+-   The correlation, squared
+
+-   Also a measure of what percentage of variance in dependent measure is explained by a model
+
+-   If you are predicting A with B,C,D,E r2 is often used as the measure of model goodness rather than r (depends on the community)
+
+    -   r2 is often used as the measure of model goodness rather than r (depends on the community)
+
+## Spearman’s Correlation (\\(\\rho\\))
+
+-   Rank correlation
+
+-   Turn each variable into ranks 1 = highest value, 2 = 2nd highest value, 3 = 3rd highest value, and so on
+
+-   Then compute Pearson’s correlation
+
+-   (There’s actually an easier formula, but not relevant here)
+
+## Spearman’s Correlation (\\(\\rho\\))
+
+-   Interpreted exactly the same way as Pearson’s correlation
+
+-   1.0 – perfect
+
+-   0.0 – none
+
+-   -1.0 – perfectly negatively correlated
+
+## Why use Spearman’s Correlation (\\(\\rho\\))
+
+-   More robust to outliers
+
+-   Determines how monotonic a relationship is, not how linear it is
+
+## Questions? Comments?
+
+## Correlation Mining: Use Cases
+
+-   You have 100 variables, and you want to know how each one correlates to a variable of interest
+
+    -   Not the same as building a prediction model
+
+-   You have 100 variables, and you want to know how they correlate to each other
+
+## Many Uses…
+
+-   Studying relationships between questionnaires on traditional motivational constructs (goal orientation, grit, interest) and student reasons for taking an online course
+
+-   Correlating features of the design of mathematics problems to a range of outcome measures
+
+-   Correlating features of schools to a range of outcome measures
+
+## The Problem
+
+-   You run 100 correlations (or 10,000 correlations)
+
+-   9 of them come up statistically significant
+
+-   Which ones can you “trust”?
+
+## If you…
+
+-   Set p=0.05
+
+-   Then, assuming just random noise
+
+-   5% of your correlations will still turn up statistically significant
+
+## The Problem
+
+-   Comes from the paradigm of conducting a single statistical significance test
+
+## The Solution
+
+-   Adjust for the probability that your results are due to chance, using a post-hoc control
+
+## Two paradigms
+
+-   **FWER** – Familywise Error Rate
+
+    -   Control for the probability that any of your tests are falsely claimed to be significant (Type I Error)\
+
+-   **FDR** – False Discovery Rate
+
+    -   Control for the overall rate of false discoveries
+
+## Bonferroni Correction
+
+The classic approach to FWER correction is the Bonferroni Correction
+
+![](images/clipboard-1876051020.png){width="92"}
+
+## Bonferroni Correction
+
+Ironically, derived by Miller rather than Bonferroni
+
+## Bonferroni Correction
+
+Ironically, derived by Miller rather than Bonferroni
+
+Also ironically, there appear to be no pictures of Miller on the internet
+
+## Bonferroni Correction
+
+-   A classic example of Stigler’s Law of Eponomy
+
+    -   “No scientific discovery is named after its original discovere
+
+![](images/clipboard-4241520565.png)
+
+## Bonferroni Correction
+
+-   A classic example of Stigler’s Law of Eponomy
+
+    -   “No scientific discovery is named after its original discoverer”
+
+    -   Stigler’s Law of Eponomy was proposed by Robert Merton
+
+![](images/clipboard-342372199.png)
+
+## Bonferroni Correction
+
+-   If you are conducting n different statistical tests on the same data set
+
+-   Adjust your significance criterion α to be α / n
+
+-   E.g. For 4 statistical tests, use statistical significance criterion of 0.0125 rather than 0.05
+
+## Bonferroni Correction: Example
+
+-   Five tests
+
+    -   p=0.04, p=0.12, p=0.18, p=0.33, p=0.55
+
+-   Five corrections
+
+    -   All p compared to α= 0.01
+
+    -   None significant anymore
+
+    -   p=0.04 seen as being due to chance
+
+## Bonferroni Correction: Example
+
+-   Five tests
+
+    -   p=0.04, p=0.12, p=0.18, p=0.33, p=0.55
+
+-   Five corrections
+
+    -   All p compared to α= 0.01
+
+    -   None significant anymore
+
+    -   p=0.04 seen as being due to chance
+
+    -   Does this seem right?
+
+## Bonferroni Correction: Example
+
+-   Five tests
+
+    -   p=0.001, p=0.011, p=0.02, p=0.03, p=0.04
+
+-   Five corrections
+
+    -   All p compared to α= 0.01
+
+    -   Only p=0.001 still significant
+
+## Bonferroni Correction: Example
+
+-   Five tests
+
+    -   p=0.001, p=0.011, p=0.02, p=0.03, p=0.04
+
+-   Five corrections
+
+    -   All p compared to α= 0.01
+
+    -   Only p=0.001 still significant
+
+    -   Does this seem right?
+
+## Bonferroni Correction
+
+-   Advantages
+
+    -   You can be “certain” that an effect is real if it makes it through this correction
+
+    -   Does not assume tests are independent
+
+        -   In our “100 correlations with the same variable” case, they aren’t!
+
+-   Disadvantages
+
+    -   Massively over-conservative
+
+    -   Throws out everything if you run a lot of correlations
+
+## Questions? Comments?
+
+## Try it yourself (Bonferroni)
+
+Which ones are still significant?
+
+-   0.1 0.05
+
+-   0.01 0.005
+
+-   0.001 0.0005
+
+-   0.0001 0.00005
+
+## Questions? Comments?
+
+## Criticized for many years
+
+-   [Arguments for rejecting the sequential Bonferroni in ecological studies]{style="color:orange;"}. MD Moran - Oikos, 2003 - JSTOR
+
+-   [Beyond Bonferroni: less conservative analyses for conservation genetics]{style="color:orange;"}. SR Narum - Conservation Genetics, 2006 – Springer
+
+-   [What's wrong with Bonferroni adjustments]{style="color:orange;"}. TV Perneger - Bmj, 1998 - bmj.com
+
+-   [p Value fetishism and use of the Bonferroni adjustment]{style="color:orange;"}. JF Morgan - Evidence Based Mental Health, 2007
+
+## There are FWER corrections that are a little less conservative…
+
+-   Holm Correction/Holm’s Step-Down (Toothaker, 1991)
+
+-   Tukey’s HSD (Honestly Significant Difference)
+
+-   Sidak Correction
+
+-   Still generally very conservative
+
+-   Lead to discarding results that probably should not be discarded
+
+## FDR Correction
+
+(Benjamini & Hochberg, 1995)
+
+![](images/clipboard-16213457.png)
+
+## FDR Correction
+
+-   Different paradigm, arguably a better match to the original conception of statistical significance
+
+## Statistical significance
+
+-   p\<0.05
+
+-   A test is treated as rejecting the null hypothesis if there is a probability of under 5% that the results could have occurred if there were only random events going on
+
+-   This paradigm accepts from the beginning that we will accept junk (e.g. Type I error) 5% of the time
+
+## FWER Correction
+
+-   p\<0.05
+
+-   Each test is treated as rejecting the null hypothesis if there is a probability of under 5% divided by N that the results could have occurred if there were only random events going on
+
+-   This paradigm accepts junk far less than 5% of the time
+
+## FDR Correction
+
+-   p\<0.05
+
+-   Across tests, we will attempt to accept junk exactly 5% of the time
+
+    -   Same degree of conservatism as the original conception of statistical significance
+
+## (Benjamini & Hochberg, 1995)
+
+-   Order your n tests from most significant (lowest p) to least significant (highest p)
+
+    -   Test your first test according to significance criterion α \* *1 / n*
+
+    -   *Test your second test according to significance criterion α \** 2 / n
+
+    -   Test your third test according to significance criterion α\*3 / n
+
+    -   Quit as soon as a test is not significant
+
+## (Benjamini & Hochberg, 1995)：Example
+
+-   Five tests
+
+    -   p=0.001, p=0.011, p=0.02, p=0.03, p=0.04
+
+## (Benjamini & Hochberg, 1995)：Example
+
+-   Five tests
+
+    -   p=0.001, p=0.011, p=0.02, p=0.03, p=0.04
+
+-   First correction
+
+    -   p = 0.001 compared to α= 0.01
+
+    -   Still significant!
+
+## (Benjamini & Hochberg, 1995)：Example
+
+-   Five tests
+
+    -   p=0.001, p=0.011, p=0.02, p=0.03, p=0.04
+
+-   Second correction
+
+    -   p = 0.011 compared to α= 0.02
+
+    -   Still significant!
+
+## (Benjamini & Hochberg, 1995)：Example
+
+-   Five tests
+
+    -   p=0.001, p=0.011, p=0.02, p=0.03, p=0.04
+
+-   Third correction
+
+    -   p = 0.02 compared to α= 0.03
+
+    -   Still significant!
+
+## (Benjamini & Hochberg, 1995)：Example
+
+-   Five tests
+
+    -   p=0.001, p=0.011, p=0.02, p=0.03, p=0.04
+
+-   Fourth correction
+
+    -   p = 0.03 compared to α= 0.04
+
+    -   Still significant!
+
+## (Benjamini & Hochberg, 1995)：Example
+
+-   Five tests
+
+    -   p=0.001, p=0.011, p=0.02, p=0.03, p=0.04
+
+-   Fourth correction
+
+    -   p = 0.04 compared to α= 0.05
+
+    -   Still significant!
+
+## (Benjamini & Hochberg, 1995)：Example
+
+-   Five tests
+
+    -   p=0.04, p=0.12, p=0.18, p=0.33, p=0.55
+
+## (Benjamini & Hochberg, 1995)：Example
+
+-   Five tests
+
+    -   p=0.04, p=0.12, p=0.18, p=0.33, p=0.55
+
+-   First correction
+
+    -   p = 0.04 compared to α= 0.01
+
+    -   Not significant; stop
+
+## Conservatism
+
+-   Much less conservative than Bonferroni Correction
+
+-   Much more conservative than just accepting p\<0.05, no matter how many tests are run
+
+## Questions? Comments?
+
+## Try it yourself (B&H)
+
+-   Which ones are still significant?
+
+-   0.05 0.04
+
+-   0.03 0.02
+
+-   0.01 0.008
+
+-   0.006 0.004
+
+## Questions? Comments?
+
+## (Fairly Uncommon) Special Case
+
+-   If your stat tests have negative regression dependency
+
+    -   i.e. if one of your tests being significant makes it less likely that other tests are significant
+
+    -   This shows up, for example, when you are studying the relationships between one variable and a group of mutually exclusive variables
+
+-   Then you can’t use B&H and have to use another (more complex) control, Benjamini & Yekutieli (2001)
+
+    -   Hat tip to Karumbaiah & Matayoshi (2021) on this
+
+## q value extension in FDR (Storey, 2002)
+
+-   p = probability that the results could have occurred if there were only random events going on
+
+-   q = probability that the current test is a false discovery, given the post-hoc adjustment
+
+## q value extension in FDR (Storey, 2002)
+
+-   q can actually be lower than p
+
+-   In the case where there are many statistically significant results
+
+## q value extension in FDR (Storey, 2002)
+
+-   Benjamini & Hochberg is my preferred post-hoc test
+
+-   But for some inexplicable reason, there are many r and python packages that say they do B&H **but secretly do something else**
+
+-   Use `alpha.correction.bh` or do it by hand
+
+## Closing thought
+
+-   Correlation mining can be a powerful way to see what factors are mathematically associated with each other
+
+-   Important to get the right level of conservatism
+
+## Questions? Comments?
+
+## Discussion
+
+-   How might you want to use correlation mining?

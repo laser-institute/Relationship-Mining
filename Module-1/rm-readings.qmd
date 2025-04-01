@@ -1,0 +1,42 @@
+---
+title: "Module 6: Relationship Mining Readings"
+subtitle: ""
+format:
+  revealjs: 
+    slide-number: c/t
+    progress: true
+    chalkboard: 
+      buttons: false
+    preview-links: auto
+    logo: images/LASERLogoB.png
+    theme: [default, css/laser.scss]
+    width: 1920
+    height: 1080
+    margin: 0.05
+    footer: <a href=https://www.go.ncsu.edu/laser-institute>go.ncsu.edu/laser-institute
+resources:
+  - demo.pdf
+bibliography: lit/references.bib
+editor: visual
+csl: apa/apa-6th-edition.csl
+title-slide-attributes: 
+  data-notes: 
+---
+
+## Correlation Mining
+
+-   Baker, R.S. (2023) [Big Data and Education](https://learninganalytics.upenn.edu/MOOT/bigdataeducation.html). Ch. 5, V1.
+
+-   Slater, S., Ocumpaugh, J., Baker, R., Scupelli, P., Inventado, P.S., Heffernan, N. (2016) Semantic Features of Math Problems: Relationships to Student Learning and Engagement. Proceedings of the 9th International Conference on Educational Data Mining, 223-230.[\[pdf\]](https://learninganalytics.upenn.edu/ryanbaker/paper140.pdf)
+
+-   Matayoshi, J., & Karumbaiah, S. (2021). Investigating the Validity of Methods Used to Adjust for Multiple Comparisons in Educational Data Mining. Proceedings of the International Conference on Educational Data Mining. [\[pdf\]](https://educationaldatamining.org/EDM2021/virtual/static/pdf/EDM21_paper_10.pdf)
+
+## Association Rule Mining and Sequential Pattern Mining
+
+-   Baker, R.S. (2023) [Big Data and Education](https://learninganalytics.upenn.edu/MOOT/bigdataeducation.html). Ch. 5, V2, V3.
+
+-   Merceron, A., Yacef, K. (2008) Interestingness Measures for Association Rules in Educational Data. Proceedings of the 1st International Conference on Educational Data Mining,57-66. [\[pdf\]](https://www.educationaldatamining.org/EDM2008/uploads/proc/full%20proceedings.pdf#page=57)
+
+-   Kinnebrew, J. S., Loretz, K. M., & Biswas, G. (2013). A contextualized, differential sequence mining method to derive students' learning behavior patterns. JEDM-Journal of Educational Data Mining, 5(1), 190-219.[\[pdf\]](https://jedm.educationaldatamining.org/index.php/JEDM/article/download/34/24)
+
+-   Cukurova, M., Khan-Galaria, M., MillÃ¡n, E., & Luckin, R. (2022). A Learning Analytics Approach to Monitoring the Quality of Online One-to-one Tutoring. Journal of Learning Analytics, 1-16. [\[pdf\]](https://learning-analytics.info/index.php/JLA/article/download/7411/7627)

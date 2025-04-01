@@ -1,0 +1,78 @@
+---
+title: "Module 6: Relationship Mining Basics"
+subtitle: ""
+format:
+  revealjs: 
+    slide-number: c/t
+    progress: true
+    chalkboard: 
+      buttons: false
+    preview-links: auto
+    logo: images/LASERLogoB.png
+    theme: [default, css/laser.scss]
+    width: 1920
+    height: 1080
+    margin: 0.05
+    footer: <a href=https://www.go.ncsu.edu/laser-institute>go.ncsu.edu/laser-institute
+resources:
+  - demo.pdf
+bibliography: lit/references.bib
+editor: visual
+csl: apa/apa-6th-edition.csl
+title-slide-attributes: 
+  data-notes: Today we are going to discuss memory algorithms.
+---
+
+## Relationship Mining
+
+-   Discover relationships between variables in a data set with many variables
+
+-   Many types of relationship mining
+
+## Correlation Mining
+
+-   Perhaps the simplest form of relationship mining
+
+-   Finding substantial linear (or monotonic) correlations between variables
+
+-   In a large set of variables
+
+## Association Rule Mining
+
+Try to automatically find simple if-then rules within the data set
+
+## Sequential Pattern Mining
+
+Try to automatically find temporal patterns within the data set
+
+## Network Analysis
+
+-   Social Network Analysis
+
+-   Epistemic Network Analysis
+
+-   Both have their own LASER badges, separate from Relationship Mining!
+
+## This week
+
+-   We will go in depth on correlation mining, association rule mining, sequential pattern mining
+
+-   How to use them to discover insights from data
+
+-   How to avoid obtaining spurious or meaningless “findings”
+
+-   We will cover examples of each of these three forms of relationship mining
+
+## What applications are you interested in?
+
+Who here has already used correlation mining (or something like it), association rule mining, or sequential pattern mining?
+
+## What applications are you interested in?
+
+-   Who here already has specific ideas for how you’d like to use correlation mining (or something like it), association rule mining, or sequential pattern mining?
+
+-   Tell us more – about the data, about the goals of your analysis
+
+## First Up
+
+Correlation Mining

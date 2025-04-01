@@ -1,0 +1,271 @@
+---
+title: "Module 6: Correlation Mining "
+subtitle: "Case Study"
+author: "LASER Institute"
+date: today 
+format:
+  html:
+    toc: true
+    toc-depth: 4
+    toc-location: right
+theme:
+  light: simplex
+  dark: cyborg
+editor: visual
+jupyter: python3
+csl: apa/apa-6th-edition.csl
+bibliography: lit/references.bib
+---
+
+# Prepare
+
+## 1. Review the Research
+
+Our first case study is inspired by @rowe2021assessing. This paper explores the use of Zoombinis, an educational puzzle game, as a tool for assessing implicit computational thinking (CT) practices in learners. By analyzing in-game actions and applying educational data mining techniques, the authors developed automated detectors to measure problem-solving strategies, validating these assessments against external CT measures.
+
+![](images/clipboard-4103274741.png)
+
+Link is [here](https://learninganalytics.upenn.edu/ryanbaker/CHB-D-19-03159R1.pdf).
+
+### Correlation Mining in this Paper
+
+This study investigates the use of educational data mining and game-based learning analytics to assess implicit computational thinking (CT) in students playing the puzzle game Zoombinis. @rowe2021assessing developed automated detectors to analyze gameplay data and identify key CT practices, such as problem decomposition, pattern recognition, abstraction, and algorithm design.
+
+The study aims to answer:
+
+1.  What indicators of implicit CT can be reliably predicted using automated detectors in Zoombinis?
+
+2.  How do in-game CT measures relate to external CT assessments?
+
+By analyzing gameplay logs, @rowe2021assessing build machine-learning models to predict students' CT behaviors, which are then validated against standardized external CT assessments.
+
+------------------------------------------------------------------------
+
+### **Correlation Mining in the Study**
+
+### **1. Purpose of Correlation Mining**
+
+The study employs correlation mining to evaluate the relationship between:
+
+-   In-game CT behaviors (detected via game log analysis), and
+
+-   External CT assessment scores (collected from standardized post-tests).
+
+By computing Pearson correlations, the researchers measure how strongly in-game behaviors predict real-world CT skills.
+
+------------------------------------------------------------------------
+
+### **2. Key Findings from Correlation Mining**
+
+#### **A. Relationship Between Problem-Solving Strategies and CT Scores**
+
+Correlation analysis shows that:
+
+-   Effective strategies (Systematic Testing, Full Solution Implementation) are positively correlated with higher CT scores.
+
+-   Ineffective strategies (Trial and Error, Acting Inconsistently with Evidence) are negatively correlated with CT performance.
+
+| **CT Strategy**                   | **Correlation with CT Scores** |
+|-----------------------------------|--------------------------------|
+| Systematic Testing                | 0.12 – 0.18 (positive)         |
+| Implementing Full Solution        | 0.20 – 0.24 (positive)         |
+| Trial and Error                   | -0.09 – -0.18 (negative)       |
+| Acting Inconsistent with Evidence | -0.11 – -0.24 (negative)       |
+
+**Key Insight:** Players who systematically tested hypotheses and implemented solutions efficiently performed better in external CT assessments.
+
+------------------------------------------------------------------------
+
+#### **B. Correlation Between Gameplay Efficiency & CT Scores**
+
+Players demonstrating efficient gameplay mechanics had better CT scores, while struggling players (e.g., those repeatedly failing to recognize patterns) performed worse.
+
+| **Gameplay Behavior**                   | **Correlation with CT Scores** |
+|-----------------------------------------|--------------------------------|
+| Highly Efficient Gameplay               | 0.18 – 0.24 (positive)         |
+| Learning Game Mechanics (slow learning) | -0.20 – -0.25 (negative)       |
+
+**Key Insight:** More efficient players exhibited stronger CT skills, whereas those struggling with game mechanics scored lower on post-tests.
+
+------------------------------------------------------------------------
+
+#### **C. Correlation of Implicit Algorithmic Strategies**
+
+Specific game strategies showed different levels of association with external CT scores.
+
+| **Puzzle**   | **Strategy**              | **Correlation (r-value)** |
+|--------------|---------------------------|---------------------------|
+| Pizza Pass   | One at a Time             | 0.13 (positive)           |
+|              | Winnowing                 | -0.20 (negative)          |
+| Mudball Wall | Maximizing Dots           | 0.25 (positive)           |
+|              | Alternating Color & Shape | 0.13 (positive)           |
+
+**Key Insight:**
+
+-   The "Maximizing Dots" strategy was the strongest predictor of CT success.
+
+-   The "Winnowing" strategy had a negative correlation, possibly due to inefficient trial-and-error play.
+
+------------------------------------------------------------------------
+
+### **3. Model Performance & Predictive Accuracy**
+
+The researchers built automated detectors to identify in-game CT behaviors. These models were evaluated using AUC (Area Under Curve) scores, which measure prediction accuracy.
+
+| **Puzzle**          | **Performing Detector**    | **AUC Score** |
+|---------------------|----------------------------|---------------|
+| **Pizza Pass**      | One at a Time Strategy     | 0.92          |
+|                     | Highly Efficient Gameplay  | 0.91          |
+| **Mudball Wall**    | Maximizing Dots            | 0.89          |
+|                     | Implementing Full Solution | 0.88          |
+| **Allergic Cliffs** | Pattern Recognition        | 0.81          |
+
+**Key Insight:**
+
+-   The "One at a Time" strategy and "Maximizing Dots" were the most reliably detected CT behaviors.
+
+-   The automated models were highly effective, with AUC scores exceeding 0.80, indicating strong predictive power.
+
+------------------------------------------------------------------------
+
+### **Conclusion**
+
+-   Correlation mining confirmed that Zoombinis gameplay data reflects real-world CT abilities.
+
+-   Effective in-game strategies (e.g., systematic testing) correlated with better CT scores.
+
+-   Detectors accurately predicted CT behaviors, validating the use of game-based assessments.
+
+## 2. Correlation Mining
+
+We will use simulated dataset with **gameplay behaviors** and **CT scores**.
+
+### Step 1: Import Required Libraries
+
+```{python}
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.metrics import roc_auc_score
+from scipy.stats import pearsonr
+from statsmodels.stats.multitest import multipletests
+```
+
+This imports essential libraries for data, visualization, correlation, and model evaluation.
+
+### **Step 2: Generate Simulated Gameplay Data**
+
+Since actual gameplay data is unavailable, we create **simulated data** for 500 students, including:
+
+-   **CT strategies** (e.g., Systematic Testing, Trial and Error)
+
+-   **Gameplay efficiency** (e.g., Highly Efficient, Acting Inconsistent with Evidence)
+
+-   **CT assessment scores** (external standardized test results)
+
+```{python}
+# Set random seed for reproducibility
+np.random.seed(42)
+
+# Number of students
+# Assuming num_students is defined earlier in your code
+num_students = 100  # Setting a default value if not defined
+
+# Create base values
+base_ct_aptitude = np.random.normal(75, 10, num_students)  # Base computational thinking ability
+
+# Now create our variables with mixed significance of correlations
+data = pd.DataFrame({
+    # SIGNIFICANT CORRELATIONS:
+    
+    # Strong positive correlation with CT_Score
+    'Systematic_Testing': np.clip(base_ct_aptitude * 0.08 + 
+                                  np.random.normal(0, 1.5, num_students), 0, 10).astype(int),
+    
+    # Moderate positive correlation with CT_Score
+    'Implementing_Full_Solution': np.clip(base_ct_aptitude * 0.05 + 
+                                          np.random.normal(0, 2.5, num_students), 0, 10).astype(int),
+    
+    # Moderate negative correlation with CT_Score
+    'Acting_Inconsistent': np.clip(10 - base_ct_aptitude * 0.04 + 
+                                   np.random.normal(0, 2.5, num_students), 0, 10).astype(int),
+    
+    # NON-SIGNIFICANT CORRELATIONS:
+    
+    # Very weak/no correlation with CT_Score (mostly random)
+    'Trial_and_Error': np.clip(np.random.normal(5, 2.5, num_students), 0, 10).astype(int),
+    
+    # Very weak/no correlation with CT_Score (mostly random)
+    'Highly_Efficient_Gameplay': np.clip(np.random.normal(5, 2.5, num_students), 0, 10).astype(int),
+    
+    # CT Score based on the base aptitude with some noise
+    'CT_Score': np.clip(base_ct_aptitude + np.random.normal(0, 5, num_students), 50, 100).astype(int)
+})
+
+
+# Display first few rows
+print(data.head())
+```
+
+### **Step 3: Compute Pearson Correlations**
+
+Now, we compute **Pearson correlation coefficients** between **gameplay behaviors** and **CT scores** to analyze their relationships and apply **Benjamini-Hochberg correction.**
+
+```{python}
+# Compute correlations and p-values
+correlations={}
+p_values={}
+for column in data.columns[:-1]:  # Exclude CT_Score
+    corr, p_value = pearsonr(data[column], data['CT_Score'])
+    correlations[column] = corr
+    p_values[column] = p_value
+
+# Convert to DataFrame
+corr_df = pd.DataFrame({'Correlation': correlations, 'p_value': p_values})
+
+import numpy as np
+
+def benjamini_hochberg(p_values):
+    n = len(p_values)
+    
+    # Pair each p-value with its index and sort by p-value
+    sorted_pvals = sorted(enumerate(p_values), key=lambda x: x[1])
+    
+    # Initialize result arrays for both original and sorted views
+    result_original = np.zeros((n, 3), dtype=object)
+    result_sorted = np.zeros((n, 3), dtype=object)
+    
+    # Fill result arrays with p-values
+    for i, (orig_index, pval) in enumerate(sorted_pvals):
+        result_sorted[i, 0] = pval  # Sorted p-values
+        result_original[orig_index, 0] = pval  # Original p-values
+    
+    # Apply the Benjamini-Hochberg procedure
+    for rank, (orig_index, pval) in enumerate(sorted_pvals, start=1):
+        alpha = (0.05 * rank) / n
+        
+        # Fill alpha values
+        result_sorted[rank - 1, 1] = alpha
+        result_original[orig_index, 1] = alpha
+        
+        # Mark significance
+        significance = 'Significant' if pval <= alpha else 'Not Significant'
+        result_sorted[rank - 1, 2] = significance
+        result_original[orig_index, 2] = significance
+    
+    return result_original, result_sorted
+  
+result_original, result_sorted  = benjamini_hochberg(p_values.values())
+print("=== Original Order ===")
+print("P-value | Alpha | Significance")
+for row in result_original:
+    print(f"{row[0]:.5f} | {row[1]:.5f} | {row[2]}")
+
+print("\n=== Sorted by P-value ===")
+print("P-value | Alpha | Significance")
+for row in result_sorted:
+    print(f"{row[0]:.5f} | {row[1]:.5f} | {row[2]}")
+```
+
+## 3. Reference
