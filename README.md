@@ -16,7 +16,7 @@ Module 2 - Association Rule Mining:
 [Association Rule Mining Code Along](https://laserkt.quarto.pub/module-2-association-rule-mining-950d/#/title-slide)  
 
 Module 3 - Sequential Pattern Mining:    
-[Sequential Pattern Mining Conceptual Overview](]https://laserkt.quarto.pub/module-3-sequential-pattern-mining-4cd0/#/title-slide)  
+[Sequential Pattern Mining Conceptual Overview](https://laserkt.quarto.pub/module-3-sequential-pattern-mining-4cd0/#/title-slide)  
 [Sequential Pattern Mining Case Study](https://laserkt.quarto.pub/module-3-sequential-pattern-mining/)  
 [Sequential Pattern Mining Code Along](https://laserkt.quarto.pub/module-3-sequential-pattern-mining-98e4/#/title-slide)  
 
