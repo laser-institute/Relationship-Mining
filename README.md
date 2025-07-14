@@ -22,5 +22,5 @@ Module 3 - Sequential Pattern Mining:
 
 
 ASSISTments Activity:  
-[Correlation Mining:](https://learninganalytics.upenn.edu/LASER/CKT-PSCOR-PSCORQ1-ATHd.html)  
-[Sequential Pattern Mining:](https://learninganalytics.upenn.edu/LASER/CKT-PSSPM-PSSPMQ1-TGMK.html)
+[Correlation Mining](https://learninganalytics.upenn.edu/LASER/CKT-PSCOR-PSCORQ1-ATHd.html)  
+[Sequential Pattern Mining](https://learninganalytics.upenn.edu/LASER/CKT-PSSPM-PSSPMQ1-TGMK.html)
