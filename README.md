@@ -8,7 +8,7 @@ Relationship Mining Module Useful Links:
 Module 1 - Correlation Mining:    
 [Correlation Mining Conceptual Overview](https://laserkt.quarto.pub/module-6-correlation-mining/#/title-slide)  
 [Correlation Mining Case Study](https://laserkt.quarto.pub/kt-6-correlation-mining-case-study/)  
-[Correlation Mining Code Along](https://laserkt.quarto.pub/module-6-correlationmining-code-along/#/title-slide)  
+[Correlation Mining Code Along](https://laserkt.quarto.pub/module-1-correlation-mining/#/title-slide)  
 
 Module 2 - Association Rule Mining:    
 [Association Rule Mining Conceptual Overview](https://laserkt.quarto.pub/module-2-association-rule-mining/#/title-slide)  
