@@ -4,11 +4,17 @@ Relationship mining reveals meaningful patterns and associations within datasets
 Relationship Mining Module Useful Links:  
 [Relationship Mining Module Badge Activity](https://laserkt.quarto.pub/relmin-badge-activity/)  
 [Relationship Mining Module Readings](https://laserkt.quarto.pub/module-6-relationship-mining-readings/#/title-slide)  
-[Relationship Mining Basics](https://laserkt.quarto.pub/module-6-relationship-mining-basics/#/title-slide)   
+[Relationship Mining Basics](https://laserkt.quarto.pub/module-6-relationship-mining-basics/#/title-slide)
+
 Module 1 - Correlation Mining:    
 [Correlation Mining Conceptual Overview](https://laserkt.quarto.pub/module-6-correlation-mining/#/title-slide)  
 [Correlation Mining Case Study](https://laserkt.quarto.pub/kt-6-correlation-mining-case-study/)  
 [Correlation Mining Code Along](https://laserkt.quarto.pub/module-1-correlation-mining/#/title-slide)  
+
+ASSISTments Activity:  
+[Correlation Mining:](https://learninganalytics.upenn.edu/LASER/CKT-PSCOR-PSCORQ1-ATHd.html)  
+[Dataset1](https://learninganalytics.upenn.edu/ryanbaker/EDM2014/B6-data-v2-set1.csv)  
+[Dataset2](https://learninganalytics.upenn.edu/ryanbaker/EDM2014/B6-v2-set2.csv) 
 
 Module 2 - Association Rule Mining:    
 [Association Rule Mining Conceptual Overview](https://laserkt.quarto.pub/module-2-association-rule-mining/#/title-slide)  
@@ -20,11 +26,6 @@ Module 3 - Sequential Pattern Mining:
 [Sequential Pattern Mining Case Study](https://laserkt.quarto.pub/module-3-sequential-pattern-mining/)  
 [Sequential Pattern Mining Code Along](https://laserkt.quarto.pub/module-3-sequential-pattern-mining-98e4/#/title-slide)  
 
-
-ASSISTments Activity:  
-[Correlation Mining:](https://learninganalytics.upenn.edu/LASER/CKT-PSCOR-PSCORQ1-ATHd.html)  
-[Dataset1](https://learninganalytics.upenn.edu/ryanbaker/EDM2014/B6-data-v2-set1.csv)  
-[Dataset2](https://learninganalytics.upenn.edu/ryanbaker/EDM2014/B6-v2-set2.csv)  
-
+ASSISTments Activity:
 [Sequential Pattern Mining:](https://learninganalytics.upenn.edu/LASER/CKT-PSSPM-PSSPMQ1-TGMK.html)  
 [Dataset](https://learninganalytics.upenn.edu/ryanbaker/EDM2020/ba4-in-assoc.csv)  
