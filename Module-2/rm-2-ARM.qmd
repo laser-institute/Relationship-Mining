@@ -1,0 +1,419 @@
+---
+title: "Module 2: Association Rule Mining"
+subtitle: ""
+format:
+  revealjs: 
+    slide-number: c/t
+    progress: true
+    chalkboard: 
+      buttons: false
+    preview-links: auto
+    logo: images/LASERLogoB.png
+    theme: [default, css/laser.scss]
+    width: 1920
+    height: 1080
+    margin: 0.05
+    footer: <a href=https://www.go.ncsu.edu/laser-institute>go.ncsu.edu/laser-institute
+resources:
+  - demo.pdf
+bibliography: lit/references.bib
+editor: visual
+csl: apa/apa-6th-edition.csl
+title-slide-attributes: 
+  data-notes: Today we are going to discuss memory algorithms.
+---
+
+## Association Rule Mining
+
+-   Try to automatically find simple if-then rules within the data set
+
+## Example
+
+-   Famous (and fake) example:
+
+-   People who buy more diapers buy more beer
+
+-   If person X buys diapers,
+
+-   Person X buys beer
+
+-   Conclusion: put expensive beer next to the diapers
+
+## Interpretation #1
+
+-   Guys are sent to the grocery store to buy diapers, they want to have a drink down at the pub, but they buy beer to get drunk at home instead
+
+## Interpretation #2
+
+-   There’s just no time to go to the bathroom during a major drinking bout
+
+## Serious Issue
+
+-   Association rules imply causality by their if-then nature
+
+-   But causality can go either direction
+
+## If-conditions can be more complex
+
+-   If person X buys diapers, and person X is male, and it is after 7pm, then person Y buys beer
+
+## Then-conditions can also be more complex
+
+-   If person X buys diapers, and person X is male, and it is after 7pm, then person Y buys beer and tortilla chips and salsa
+
+-   Can be harder to use, sometimes eliminated from consideration
+
+## Useful for…
+
+-   Generating hypotheses to study further
+
+-   Finding unexpected connections
+
+    -   Is there a surprisingly ineffective instructor or math problem?
+
+    -   Are there e-learning resources that tend to be selected together?
+
+## Questions? Comments?
+
+## Association Rule Mining
+
+-   Find rules
+
+-   Evaluate rules
+
+## Association Rule Mining
+
+-   Find rules
+
+-   [Evaluate rules]{style="color:red;"}
+
+## Rule Evaluation
+
+-   What would make a rule “good”?
+
+## Rule Evaluation
+
+-   Support/Coverage
+
+-   Confidence
+
+-   “Interestingness”
+
+## Support/Coverage
+
+-   Number of data points that fit the rule, divided by the total number of data points
+
+-   (Variant: just the number of data points that fit the rule)
+
+## Example
+
+::: columns
+::: {.column width="50%"}
+Rule:If a student took Advanced Data Mining, the student took Intro Statistics
+
+Support/coverage?
+:::
+
+::: {.column width="50%"}
+![](images/clipboard-1830230738.png)
+:::
+:::
+
+## Example
+
+::: columns
+::: {.column width="50%"}
+-   Rule:If a student took Advanced Data Mining, the student took Intro Statistics
+
+-   Support/coverage?
+
+-   2/11= 0.1818
+:::
+
+::: {.column width="50%"}
+![](images/clipboard-1830230738.png)
+:::
+:::
+
+## Confidence
+
+-   Number of data points that fit the rule, divided by the number of data points that fit the rule’s IF condition
+
+-   Equivalent to precision in classification
+
+-   Also referred to as accuracy, just to make things confusing
+
+-   NOT equivalent to accuracy in classification
+
+## Example
+
+::: columns
+::: {.column width="50%"}
+-   Rule:If a student took Advanced Data Mining, the student took Intro Statistics
+
+-   Confidence?
+:::
+
+::: {.column width="50%"}
+![](images/clipboard-1830230738.png)
+:::
+:::
+
+## Example
+
+::: columns
+::: {.column width="50%"}
+-   Rule:If a student took Advanced Data Mining, the student took Intro Statistics
+
+-   Confidence?
+
+-   2/6 = 0.33
+:::
+
+::: {.column width="50%"}
+![](images/clipboard-1830230738.png)
+:::
+:::
+
+## Important Note
+
+-   Implementations of Association Rule Mining sometimes differ based on whether the values for support and confidence (and other metrics)
+
+-   Are calculated based on exact cases
+
+-   Or some other grouping variable (sometimes called “customer” in specific packages)
+
+## For example
+
+::: columns
+::: {.column width="50%"}
+-   Let’s say you are looking at whether boredom follows frustration
+
+-   If Frustrated at time N,Then Bored at time N+1
+:::
+
+::: {.column width="50%"}
+![](images/clipboard-3022488483.png)
+:::
+:::
+
+## For example
+
+::: columns
+::: {.column width="50%"}
+-   If you just calculate it this way,
+
+-   Confidence = 4/5
+:::
+
+::: {.column width="50%"}
+![](images/clipboard-3022488483.png)
+:::
+:::
+
+## For example
+
+::: columns
+::: {.column width="50%"}
+-   But if you treat student as your “customer” grouping variable
+
+-   Then whole rule applies for A, C And IF applies for A, C
+
+-   So confidence = 1
+:::
+
+::: {.column width="50%"}
+![](images/clipboard-1841127172.png)
+:::
+:::
+
+## Arbitrary Cut-offs
+
+-   The association rule mining community differs from most other methodological communities by acknowledging that cut-offs for support and confidence are arbitrary
+
+-   Researchers typically adjust them to find a desirable number of rules to investigate, ordering from best-to-worst…
+
+-   Rather than arbitrarily saying that all rules over a certain cut-off are “good”
+
+## Questions? Comments?
+
+## Other Metrics
+
+-   Support and confidence aren’t enough
+
+-   Why not?
+
+## Why not?
+
+-   Possible to generate large numbers of trivial associations
+
+    -   Students who took a course took its prerequisites (AUTHORS REDACTED, 2009)
+
+    -   Students who do poorly on the exams fail the course (AUTHOR REDACTED, 2009)
+
+## Interestingness
+
+## Interestingness
+
+-   Not quite what it sounds like
+
+-   Typically defined as measures other than support and confidence
+
+-   Rather than an actual measure of the novelty or usefulness of the discovery
+
+## Potential Interestingness Measures
+
+-   Cosine
+
+    $$\frac{P(A^{\wedge}B)}{\sqrt{P(A)*P(B))}}$$
+
+-   Measures co-occurrence
+
+-   Merceron & Yacef (2008) note that it is easy to interpret (numbers closer to 1 than 0 are better; over 0.65 is desirable)
+
+![](images/clipboard-2207286941.png)
+
+## Example
+
+::: columns
+::: {.column width="50%"}
+-   Rule:If a student took BDEMOOC, the student published EDM paper
+
+-   Cosine? $$\frac{P(A,B)}{\sqrt{P(A)*P(B))}}$$
+
+-   (0.4)/sqrt(0.5\*0.5) = 0.8
+:::
+
+::: {.column width="50%"}
+![](images/clipboard-3255517494.png)
+:::
+:::
+
+## Potential Interestingness Measures
+
+-   Lift$$
+    \frac{Confidence(A\to B)}{P(B)} = \frac{P(A^{\wedge}B  )}{P(A)*P(B)}
+    $$
+
+-   Measures whether data points that have both A and B are more common than would be expected from the base rate of each
+
+-   Merceron & Yacef (2008) note that it is easy to interpret (lift over 1 indicates stronger association)
+
+## Example
+
+::: columns
+::: {.column width="50%"}
+::: {.column width="50%"}
+-   Rule:If a student took BDEMOOC, the student published EDM paper
+
+-   Lift?
+
+    $$
+    \frac{P(A^{\wedge}B  )}{P(A)*P(B)}
+    $$
+
+-   (0.4)/(0.5\*0.5) = 1.6
+:::
+:::
+
+::: {.column width="50%"}
+![](images/clipboard-3255517494.png)
+:::
+:::
+
+## Merceron & Yacef recommendation
+
+-   Rules with high cosine or high lift should be considered interesting
+-   Rules with high cosine or high lift should be considered interesting
+
+## Other Interestingness measures
+
+![](images/clipboard-521391457.png)
+
+(Tan, Kumar, & Srivastava, 2002)
+
+## Worth drawing your attention to
+
+-   Jaccard
+
+    $$
+    \frac{P(A^{\wedge}B)}{P(A)+P(B)- P(A^{\wedge}B)}
+    $$
+
+-   Measures the relative degree to which having A and B together is more likely than having either A or B but not both
+
+## Other idea for selection
+
+-   Select rules based both on interestingness and based on being different from other rules already selected (e.g., involve different operators)
+
+## Alternate approach (Bazaldua et al., 2014)
+
+-   Compared “interestingness” measures to human judgments about how interesting the rules were
+
+-   They found that Jaccard and Cosine were the best single predictors
+
+-   And that Lift had predictive power independent of them
+
+-   But they also found that the correlations between \[Jaccard and Cosine\] and \[human ratings of interestingness\] were negative
+
+    -   For Cosine, opposite of prediction in Merceron & Yacef!
+
+## Questions? Comments?
+
+## Association Rule Mining
+
+-   [Find rules]{style="color:red;"}
+
+-   Evaluate rules
+
+## The Apriori algorithm (Agrawal et al., 1996)
+
+1.  Generate frequent itemset
+
+2.  Generate rules from frequent itemset
+
+## Generate Frequent Itemset
+
+-   Generate all single items, take those with support over threshold – {i1}
+
+-   Generate all pairs of items from items in {i1}, take those with support over threshold – {i2}
+
+-   Generate all triplets of items from items in {i2}, take those with support over threshold – {i3}
+
+-   And so on…
+
+-   Then form joint itemset of all itemsets
+
+## Generate Rules From Frequent Itemset
+
+-   Given a frequent itemset, take all items with at least two components
+
+-   Generate rules from these items
+
+    -   E.g. {A,B,C,D} leads to {A,B,C}-\>D, {A,B,D}-\>C, {A,B}-\>{C,D}, etc. etc.
+
+-   Eliminate rules with confidence below threshold
+
+## Finally
+
+-   Rank the resulting rules using your interest measures
+
+## Questions? Comments?
+
+## Variant on association rules
+
+-   Negative association rules (Brin et al., 1997)
+
+    -   What doesn’t go together?(especially if probability suggests that two things should go together)
+
+    -   People who buy diapers don’t buy car wax, even though 30-year old males buy both?
+
+    -   People who take advanced data mining don’t take hierarchical linear models, even though everyone who takes either has advanced math?
+
+    -   Students who game the system don’t go off-task?
+
+## Rules in Education
+
+-   What might be some reasonable applications for Association Rule Mining in education?
+
+-   Can you brainstorm some ways you might use them in your own work?

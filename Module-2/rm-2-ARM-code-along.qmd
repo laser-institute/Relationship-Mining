@@ -1,0 +1,102 @@
+---
+title: "Module 2: Association Rule Mining"
+subtitle: "Code Along"
+format:
+  revealjs: 
+    slide-number: c/t
+    progress: true
+    chalkboard: 
+      buttons: false
+    preview-links: auto
+    logo: images/LASERLogoB.png
+    theme: [default, css/laser.scss]
+    width: 1920
+    height: 1080
+    margin: 0.05
+    footer: <a href=https://www.go.ncsu.edu/laser-institutego.ncsu.edu/laser-institute
+resources:
+  - demo.pdf
+bibliography: lit/references.bib
+editor: visual
+csl: apa/apa-6th-edition.csl
+title-slide-attributes: 
+  data-notes: 
+---
+
+## Code Along
+
+Association rule mining helps discover interesting relationships between items in large datasets. A common example is market basket analysis, where we find which products are frequently bought together.
+
+Let's implement association rule mining using Python and the Apriori algorithm from the `mlxtend` library:
+
+## Import the libraries
+
+``` python
+# Install necessary libraries (run this if needed)
+# pip install mlxtend pandas numpy
+
+# Import the libraries
+import pandas as pd
+import numpy as np
+from mlxtend.frequent_patterns import apriori
+from mlxtend.frequent_patterns import association_rules
+```
+
+## Step 1: Create a sample dataset
+
+``` python
+# Create a sample transaction dataset
+data = {
+    'TransactionID': [1, 1, 1, 2, 2, 3, 3, 3, 3, 4, 4, 5, 5, 5, 5],
+    'Item': ['Bread', 'Milk', 'Eggs', 'Bread', 'Milk', 'Bread', 'Milk', 'Eggs', 'Beer', 'Milk', 'Eggs', 'Bread', 'Milk', 'Eggs', 'Beer']
+}
+
+# Convert to DataFrame
+df = pd.DataFrame(data)
+print(df.head(10))
+```
+
+## Step 2: One-hot encoded format
+
+``` python
+# Transform the data into a one-hot encoded format
+basket = pd.crosstab(df['TransactionID'], df['Item'])
+
+# Convert to binary values (1 for presence, 0 for absence)
+basket_sets = basket.applymap(lambda x: 1 if x > 0 else 0)
+print(basket_sets)
+```
+
+## Step 3: Apply the Apriori algorithm
+
+``` python
+# Find frequent itemsets using the Apriori algorithm
+# min_support is a threshold for how frequently an itemset appears in the dataset
+frequent_itemsets = apriori(basket_sets, min_support=0.4, use_colnames=True)
+print(frequent_itemsets)
+```
+
+## Step 4: Generate association rules
+
+``` python
+# Generate association rules
+# min_threshold is a threshold for how strong the rules are
+rules = association_rules(frequent_itemsets, metric="lift", min_threshold=1.0)
+print(rules)
+```
+
+## Step 5: Interpret the results
+
+``` python
+# Sort rules by confidence (descending)
+rules = rules.sort_values(['confidence', 'lift'], ascending=[False, False])
+print(rules[['antecedents', 'consequents', 'support', 'confidence', 'lift']])
+```
+
+## Understanding the metrics:
+
+-   **Support**: Frequency of itemsets in the dataset
+
+-   **Confidence**: How often the rule has been found to be true
+
+-   **Lift**: How likely item Y is purchased when item X is purchased, compared to how likely item Y is purchased in general

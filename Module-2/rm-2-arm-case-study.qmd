@@ -1,0 +1,254 @@
+---
+title: "Module 2: Association Rule Mining"
+subtitle: "Case Study"
+author: "LASER Institute"
+date: today 
+format:
+  html:
+    toc: true
+    toc-depth: 4
+    toc-location: right
+theme:
+  light: simplex
+  dark: cyborg
+editor: visual
+jupyter: python3
+bibliography: lit/references.bib
+---
+
+This paper examines which metrics best predict human expert judgments of "interestingness" in association rule mining within educational data. Association rule mining is a technique that finds patterns where a set of variables (the "if-clause") predict another variable's value (the "then-clause").
+
+![](images/clipboard-270649670.png)
+
+Download the paper [here](https://learninganalytics.upenn.edu/ryanbaker/DRS_EDM-2014.pdf)
+
+The authors used educational data from the ASSISTments system involving 724 students, focusing on affect (boredom, concentration, frustration) and disengagement (off-task behavior, gaming the system). They generated 120 representative association rules from this data and had four domain experts rate each rule's interestingness on a scale of 1-5.
+
+The researchers then analyzed which standard metrics best correlated with expert judgments. They found that:
+
+1.  Jaccard, Cosine, and Support metrics had the highest correlation with expert ratings
+
+2.  A combined model using Lift, Phi Coefficient, Cosine, and Conviction best predicted expert judgments
+
+3.  The findings partially supported Merceron & Yacef's (2008) recommendation to use Cosine and Lift as interestingness measures
+
+Interestingly, Cosine correlated negatively with interestingness in their study, contrary to previous recommendations, suggesting that interestingness may be related to rarity once support and confidence are accounted for.
+
+## Python Activity
+
+### STEP 1 Import the Packages
+
+```{python}
+import pandas as pd
+import numpy as np
+from mlxtend.frequent_patterns import apriori, association_rules
+from mlxtend.preprocessing import TransactionEncoder
+import matplotlib.pyplot as plt
+import seaborn as sns
+```
+
+### STEP 2 Load and Prepare Data
+
+```{python}
+def prepare_data_for_rules(df):
+    """
+    Prepare data for association rule mining by creating transaction data
+    representing state transitions (from problem t to problem t+1)
+    """
+    # Group by student
+    transactions = []
+    
+    for student_id, student_data in df.groupby('student_id'):
+        # Sort by problem ID
+        student_data = student_data.sort_values('problem_id')
+        
+        # Create transitions
+        for i in range(len(student_data) - 1):
+            current_problem = student_data.iloc[i]
+            next_problem = student_data.iloc[i+1]
+            
+            # Get states for current problem
+            current_states = []
+            for state in df.columns[2:]:  # Skip student_id and problem_id
+                if current_problem[state] == 1:
+                    current_states.append(f"{state}_t1")
+            
+            # Get states for next problem
+            next_states = []
+            for state in df.columns[2:]:  # Skip student_id and problem_id
+                if next_problem[state] == 1:
+                    next_states.append(f"{state}_t2")
+            
+            # Add the transaction as the combined current and next states
+            transactions.append(current_states + next_states)
+    
+    print(f"Created {len(transactions)} transactions for association rule mining")
+    
+    # Print sample transactions
+    print("\nSample transactions (first 3):")
+    for i, transaction in enumerate(transactions[:3]):
+        print(f"  Transaction {i+1}: {transaction}")
+    
+    # Convert to one-hot encoded format for apriori
+    te = TransactionEncoder()
+    te_data = te.fit_transform(transactions)
+    return pd.DataFrame(te_data, columns=te.columns_), transactions
+
+
+
+df = pd.read_csv("arm-data.csv")
+print("\nSample of generated data:")
+print(df.head())
+# Prepare data for association rule mining
+print("\nPreparing data for association rule mining...")
+transaction_data, raw_transactions = prepare_data_for_rules(df)
+```
+
+### STEP 3 Find Rules
+
+```{python}
+def find_association_rules(df, min_support=0.03, min_confidence=0.1):
+    """
+    Find association rules and calculate interestingness metrics
+    """
+    print(f"Finding frequent itemsets with min_support={min_support}...")
+    # Find frequent itemsets
+    frequent_itemsets = apriori(df, min_support=min_support, use_colnames=True)
+    print(f"Found {len(frequent_itemsets)} frequent itemsets")
+    
+    if len(frequent_itemsets) == 0:
+        print("No frequent itemsets found! Try lowering the min_support threshold.")
+        return pd.DataFrame()
+    
+    print(f"Generating association rules with min_confidence={min_confidence}...")
+    # Generate association rules
+    rules = association_rules(frequent_itemsets, metric="confidence", min_threshold=min_confidence)
+    print(f"Found {len(rules)} association rules")
+    
+    if len(rules) == 0:
+        print("No association rules found! Try lowering the min_confidence threshold.")
+        return pd.DataFrame()
+    
+    print("Calculating additional interestingness metrics...")
+    # Calculate additional interestingness metrics from the paper
+    
+    # Calculate Phi Coefficient (similar to correlation coefficient)
+    rules['phi'] = rules.apply(lambda row: 
+        (row['support'] - row['antecedent support'] * row['consequent support']) / 
+        np.sqrt(row['antecedent support'] * row['consequent support'] * 
+                (1 - row['antecedent support']) * (1 - row['consequent support'])), 
+        axis=1)
+    
+    # Calculate Cosine similarity
+    rules['cosine'] = rules.apply(lambda row:
+        row['support'] / np.sqrt(row['antecedent support'] * row['consequent support']),
+        axis=1)
+    
+    # Jaccard metric
+    rules['jaccard'] = rules['support'] / (rules['antecedent support'] + rules['consequent support'] - rules['support'])
+    
+    # Conviction metric
+    rules['conviction'] = (1 - rules['consequent support']) / (1 - rules['confidence'])
+    
+    # Replace infinite values with a large number
+    rules.replace([np.inf, -np.inf], 999, inplace=True)
+    
+    return rules
+# Find association rules
+print("\nFinding association rules...")
+# Try different support thresholds if needed
+for support in [0.03, 0.02, 0.01]:
+    rules = find_association_rules(transaction_data, min_support=support)
+    if len(rules) > 0:
+        print(f"Successfully found rules with support threshold {support}")
+        break
+    print(f"No rules found with support threshold {support}, trying lower threshold...")  
+```
+
+### STEP 4 Calculating Interestingness Metrics
+
+```{python}
+
+def identify_interesting_rules(rules, top_n=10):
+    """
+    Identify interesting rules using the metrics identified in the paper
+    """
+    if len(rules) == 0:
+        return pd.DataFrame()
+        
+    # Create a combined interestingness score based on the paper's findings
+    # Using Lift, Phi, Cosine, and Conviction
+    rules['combined_score'] = (
+        rules['lift'] * 0.4 + 
+        abs(rules['phi']) * 0.3 + 
+        rules['cosine'] * 0.2 + 
+        np.log1p(rules['conviction']) * 0.1
+    )
+    
+    # Get rules about transitions from one state to another
+    # Find rules where antecedents are from time t1 and consequents from time t2
+    transition_rules = rules[
+        rules['antecedents'].apply(lambda x: any('_t1' in item for item in x)) &
+        rules['consequents'].apply(lambda x: any('_t2' in item for item in x))
+    ]
+    
+    print(f"Found {len(transition_rules)} rules representing transitions between problems")
+    
+    if len(transition_rules) == 0:
+        # If no transition rules found, return regular rules
+        print("No transition rules found. Returning top rules by combined score.")
+        interesting_rules = rules.sort_values('combined_score', ascending=False).head(top_n)
+    else:
+        # Sort by combined score
+        interesting_rules = transition_rules.sort_values('combined_score', ascending=False).head(top_n)
+    
+    return interesting_rules
+
+
+# Identify interesting rules
+print("\nIdentifying interesting rules using metrics from the paper...")
+interesting_rules = identify_interesting_rules(rules)
+
+if len(interesting_rules) == 0:
+    print("No interesting rules identified.")
+```
+
+### STEP 5 Visualization
+
+```{python}
+def analyze_metrics_correlation(rules):
+    """
+    Analyze the correlation between different interestingness metrics
+    similar to the paper's approach
+    """
+    # Select metrics to analyze
+    metrics = ['support', 'confidence', 'lift', 'conviction', 'cosine', 'jaccard', 'phi', 'combined_score']
+    correlation = rules[metrics].corr()
+    
+    # Visualize correlation
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(correlation, annot=True, cmap='coolwarm', fmt='.2f')
+    plt.title('Correlation Between Interestingness Metrics')
+    plt.tight_layout()
+    return correlation
+
+def format_rule(row):
+    """Format a rule for better readability"""
+    antecedents = ', '.join([item.replace('_t1', ' (t1)') for item in list(row['antecedents'])])
+    consequents = ', '.join([item.replace('_t2', ' (t2)') for item in list(row['consequents'])])
+    return f"IF {antecedents} THEN {consequents}"
+# Display top interesting rules
+print("\nTop 5 most interesting rules according to combined metric:")
+print("-"*70)
+for i, (_, rule) in enumerate(interesting_rules.head(5).iterrows(), 1):
+    print(f"{i}. {format_rule(rule)}")
+    print(f"   Support: {rule['support']:.3f}, Confidence: {rule['confidence']:.3f}")
+    print(f"   Lift: {rule['lift']:.3f}, Phi: {rule['phi']:.3f}, Cosine: {rule['cosine']:.3f}")
+    print(f"   Conviction: {rule['conviction']:.3f}, Jaccard: {rule['jaccard']:.3f}")
+    print(f"   Combined Score: {rule['combined_score']:.3f}")
+    print()
+
+# Analyze correlation between metrics
+print("\nAnalyzing correlation between interestingness metrics...")
+correlation = analyze_metrics_correlation(rules)
+```
