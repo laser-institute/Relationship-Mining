@@ -1,0 +1,89 @@
+---
+title: "Module 3: Sequential Pattern Mining"
+subtitle: "Code Along"
+format:
+  revealjs: 
+    slide-number: c/t
+    progress: true
+    chalkboard: 
+      buttons: false
+    preview-links: auto
+    logo: images/LASERLogoB.png
+    theme: [default, css/laser.scss]
+    width: 1920
+    height: 1080
+    margin: 0.05
+    footer: <a href=https://www.go.ncsu.edu/laser-institutego.ncsu.edu/laser-institute
+resources:
+  - demo.pdf
+bibliography: lit/references.bib
+editor: visual
+csl: apa/apa-6th-edition.csl
+title-slide-attributes: 
+  data-notes: 
+---
+
+## Sequential Pattern Mining
+
+Try to automatically find temporal patterns within the data set
+
+Example: If student A watch the lecture videos, student A will read the comments later as well.
+
+## Generate the dataset
+
+::: panel-tabset
+## Import
+
+Import the necessary package: random and PrefixSpan.
+
+``` python
+import random
+from prefixspan import PrefixSpan
+```
+
+## Generate
+
+Randomly Generate the Dataset for SPM mining
+
+``` python
+# Possible activities
+activities = ['GAMING', 'ON-TASK', 'OFF-TASK', 'BORED', 'FRUSTRATED']
+
+# Function to generate random student activity sequences
+def generate_student_data(num_students=20, max_sequence_length=6):
+    student_data = []
+    for _ in range(num_students):
+        # Random sequence length between 3 and max_sequence_length
+        sequence_length = random.randint(3, max_sequence_length)
+        # Randomly select activities for the student (allowing repetition)
+        sequence = random.choices(activities, k=sequence_length)  # Use random.choices instead of random.sample
+        student_data.append(sequence)
+    return student_data
+
+# Generate random student data for 20 students
+student_data = generate_student_data(20)
+# Print the generated student data
+print("Generated Student Data:")
+for student in student_data:
+    print(student)
+```
+:::
+
+## Conduct the SPM
+
+Conduct the analysis with PrefixSpan algorithm with the minimum support = 0.3
+
+``` python
+{python}
+# Create a PrefixSpan object and run it on the student data
+ps = PrefixSpan(student_data)
+
+# Set a minimum support value (e.g., 0.3 means the pattern should appear in at least 30% of sequences)
+min_support = 0.3
+patterns = ps.frequent(min_support)
+
+# Display the frequent sequential patterns
+print("\nFrequent Sequential Patterns (with min_support=0.3):")
+for pattern in patterns:
+    print(pattern)
+```

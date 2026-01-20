@@ -1,0 +1,574 @@
+---
+title: "Module 3: Sequential Pattern Mining"
+subtitle: ""
+format:
+  revealjs: 
+    slide-number: c/t
+    progress: true
+    chalkboard: 
+      buttons: false
+    preview-links: auto
+    logo: images/LASERLogoB.png
+    theme: [default, css/laser.scss]
+    width: 1920
+    height: 1080
+    margin: 0.05
+    footer: <a href=https://www.go.ncsu.edu/laser-institute>go.ncsu.edu/laser-institute
+resources:
+  - demo.pdf
+bibliography: lit/references.bib
+editor: visual
+csl: apa/apa-6th-edition.csl
+title-slide-attributes: 
+  data-notes: Today we are going to discuss memory algorithms.
+---
+
+## Association Rule Mining
+
+-   Try to automatically find simple if-then rules within the data set
+
+## Sequential Pattern Mining
+
+-   Try to automatically find temporal patterns within the data set
+
+## ARM Example
+
+-   If person X buys diapers, Person X buys beer
+
+-   Purchases occur at the same time
+
+## SPM Example
+
+-   If person X takes Intro Stats now, Person X takes Advanced Data Mining in a later semester
+
+-   Conclusion: recommend Advanced Data Mining to students who have previously taken Intro Stats
+
+-   Doesn’t matter if they take other courses in between
+
+## SPM Example
+
+-   Learners in virtual environments have different sequences of behavior depending on their degree of self-regulated learning
+
+-   High self-regulated learning: Tend to gather information and then immediately record it carefully
+
+-   Low self-regulated learning: Tend to gather more information without pausing to record it(Sabourin, Mott, & Lester, 2011)
+
+## Different Constraints than ARM
+
+-   If-then elements do not need to occur in the same data point
+
+-   Instead
+
+    -   If-then elements should involve the same student (or other organizing variable, like teacher or school)
+
+    -   If elements can be within a certain time window of each other
+
+    -   Then element time should be within a certain window after if time
+
+## Comments? Questions?
+
+## Sequential Pattern Mining
+
+-   Find all subsequences in data with high support
+
+Support calculated as number of sequences that contain subsequence, divided by total number of sequences
+
+## GSP (Generalized Sequential Pattern)
+
+Classic Algorithm for SPM
+
+-   (Srikant & Agrawal, 1996)
+
+## Data pre-processing
+
+-   Data transformed from individual actions to sequences by user
+
+Bob: {GAMING and BORED,
+
+OFF-TASK and BORED,
+
+ON-TASK and BORED,
+
+GAMING and BORED,
+
+GAMING and FRUSTRATED,
+
+ON-TASK and BORED}
+
+## Data pre-processing
+
+-   In some cases, time also included
+
+Bob: {GAMING and BORED 5:05:20,
+
+OFF-TASK and BORED 5:05:40,
+
+ON-TASK and BORED 5:06:00,
+
+GAMING and BORED 5:06:20,
+
+GAMING and FRUSTRATED 5:06:40,
+
+ON-TASK and BORED 5:07:00}
+
+## Algorithm
+
+-   Take the whole set of sequences of length 1
+
+    -   May include “ANDed” combinations at same time
+
+-   Find which sequences of length 1 have support over pre-chosen threshold
+
+-   Compose potential sequences out of pairs of sequences of length 1 with acceptable support
+
+-   Find which sequences of length 2 have support over pre-chosen threshold
+
+-   Compose potential sequences out of triplets of sequences of length 1 and 2 with acceptable support
+
+-   Continue until no new sequences found
+
+## Let’s execute GPS algorithm
+
+-   With min support = 20%
+
+-   Chuck: a, abc, ac, de, cef
+
+-   Darlene: af, ab, acd, dabc, ef
+
+-   Egoberto: aef, ab, aceh, d, ae
+
+-   Francine: a, bc, acf, d, abeg
+
+## Let’s execute GPS algorithm
+
+-   With min support = 20%
+
+-   Chuck: a, abc, ac, de, cef
+
+-   Darlene: af, ab, acd, dabc, ef
+
+-   Egoberto: aef, ab, aceh, d, ae
+
+-   Francine: a, bc, acf, d, abeg
+
+    a, b, c, d, e, f
+
+## Let’s execute GPS algorithm
+
+-   With min support = 20%
+
+-   Chuck: [a]{style="color:red;"}, ab[c]{style="color:red;"}, ac, de, cef
+
+-   Darlene: af, ab, acd, dabc, ef
+
+-   Egoberto: aef, ab, aceh, d, ae
+
+-   Francine: a, bc, acf, d, abeg
+
+    a, b, c, d, e, f, [ac]{style="color:red;"}
+
+## Let’s execute GPS algorithm
+
+-   With min support = 20%
+
+-   Chuck: [a]{style="color:red;"}, abc, a[c]{style="color:red;"}, de, cef
+
+-   Darlene: af, ab, acd, dabc, ef
+
+-   Egoberto: aef, ab, aceh, d, ae
+
+-   Francine: a, bc, acf, d, abeg
+
+    a, b, c, d, e, f, [ac]{style="color:red;"}
+
+## Let’s execute GPS algorithm
+
+-   With min support = 20%
+
+-   Chuck: [a]{style="color:red;"}, abc, ac, de, [c]{style="color:red;"}ef
+
+-   Darlene: af, ab, acd, dabc, ef
+
+-   Egoberto: aef, ab, aceh, d, ae
+
+-   Francine: a, bc, acf, d, abeg
+
+    a, b, c, d, e, f, [ac]{style="color:red;"}
+
+## Let’s execute GPS algorithm
+
+-   With min support = 20%
+
+-   Chuck: a, [a]{style="color:red;"}bc, a[c]{style="color:red;"}, de, cef
+
+-   Darlene: af, ab, acd, dabc, ef
+
+-   Egoberto: aef, ab, aceh, d, ae
+
+-   Francine: a, bc, acf, d, abeg
+
+    a, b, c, d, e, f, [ac]{style="color:red;"}
+
+## Let’s execute GPS algorithm
+
+-   With min support = 20%
+
+-   Chuck: a, [a]{style="color:red;"}bc, ac, de, [c]{style="color:red;"}ef
+
+-   Darlene: af, ab, acd, dabc, ef
+
+-   Egoberto: aef, ab, aceh, d, ae
+
+-   Francine: a, bc, acf, d, abeg
+
+    a, b, c, d, e, f, [ac]{style="color:red;"}
+
+## Let’s execute GPS algorithm
+
+-   With min support = 20%
+
+-   Chuck: a, abc, [a]{style="color:red;"}c, de, [c]{style="color:red;"}ef
+
+-   Darlene: af, ab, acd, dabc, ef
+
+-   Egoberto: aef, ab, aceh, d, ae
+
+-   Francine: a, bc, acf, d, abeg
+
+    a, b, c, d, e, f, [ac]{style="color:red;"}
+
+## Let’s execute GPS algorithm
+
+-   With min support = 20%
+
+-   Chuck: a, abc, ac, de, cef
+
+-   Darlene: [a]{style="color:red;"}f, ab, a[c]{style="color:red;"}d, dabc, ef
+
+-   Egoberto: aef, ab, aceh, d, ae
+
+-   Francine: a, bc, acf, d, abeg
+
+    a, b, c, d, e, f, [ac]{style="color:red;"}
+
+## Let’s execute GPS algorithm
+
+-   With min support = 20%
+
+-   Chuck: a, abc, ac, de, cef
+
+-   Darlene: [a]{style="color:red;"}f, ab, acd, dab[c]{style="color:red;"}, ef
+
+-   Egoberto: aef, ab, aceh, d, ae
+
+-   Francine: a, bc, acf, d, abeg
+
+    a, b, c, d, e, f, [ac]{style="color:red;"}
+
+## Let’s execute GPS algorithm
+
+-   With min support = 20%
+
+-   Chuck: a, abc, ac, de, cef
+
+-   Darlene: af, [a]{style="color:red;"}b, a[c]{style="color:red;"}d, dabc, ef
+
+-   Egoberto: aef, ab, aceh, d, ae
+
+-   Francine: a, bc, acf, d, abeg
+
+    a, b, c, d, e, f, [ac]{style="color:red;"}
+
+## Let’s execute GPS algorithm
+
+-   With min support = 20%
+
+-   Chuck: a, abc, ac, de, cef
+
+-   Darlene: af, [a]{style="color:red;"}b, acd, dab[c]{style="color:red;"}, ef
+
+-   Egoberto: aef, ab, aceh, d, ae
+
+-   Francine: a, bc, acf, d, abeg
+
+    a, b, c, d, e, f, [ac]{style="color:red;"}
+
+## Let’s execute GPS algorithm
+
+-   With min support = 20%
+
+-   Chuck: a, abc, ac, de, cef
+
+-   Darlene: af, ab, [a]{style="color:red;"}cd, dab[c]{style="color:red;"}, ef
+
+-   Egoberto: aef, ab, aceh, d, ae
+
+-   Francine: a, bc, acf, d, abeg
+
+    a, b, c, d, e, f, [ac]{style="color:red;"}
+
+## Let’s execute GPS algorithm
+
+-   With min support = 20%
+
+-   Chuck: a, abc, ac, de, cef
+
+-   Darlene: af, ab, acd, dabc, ef
+
+-   Egoberto: [a]{style="color:red;"}ef, ab, a[c]{style="color:red;"}eh, d, ae
+
+-   Francine: a, bc, acf, d, abeg
+
+    a, b, c, d, e, f, [ac]{style="color:red;"}
+
+## Let’s execute GPS algorithm
+
+-   With min support = 20%
+
+-   Chuck: a, abc, ac, de, cef
+
+-   Darlene: af, ab, acd, dabc, ef
+
+-   Egoberto: aef, [a]{style="color:red;"}b, a[c]{style="color:red;"}eh, d, ae
+
+-   Francine: a, bc, acf, d, abeg
+
+    a, b, c, d, e, f, [ac]{style="color:red;"}
+
+## Let’s execute GPS algorithm
+
+-   With min support = 20%
+
+-   Chuck: a, abc, ac, de, cef
+
+-   Darlene: af, ab, acd, dabc, ef
+
+-   Egoberto: aef, ab, aceh, d, ae
+
+-   Francine: [a]{style="color:red;"}, b[c]{style="color:red;"}, acf, d, abeg
+
+    a, b, c, d, e, f, [ac]{style="color:red;"}
+
+## Let’s execute GPS algorithm
+
+-   With min support = 20%
+
+-   Chuck: a, abc, ac, de, cef
+
+-   Darlene: af, ab, acd, dabc, ef
+
+-   Egoberto: aef, ab, aceh, d, ae
+
+-   Francine: [a]{style="color:red;"}, bc, a[c]{style="color:red;"}f, d, abeg
+
+    a, b, c, d, e, f, [ac]{style="color:red;"}
+
+## Let’s execute GPS algorithm
+
+-   With min support = 20%
+
+-   Chuck: a, abc, ac, de, cef
+
+-   Darlene: af, ab, acd, dabc, ef
+
+-   Egoberto: aef, ab, aceh, d, ae
+
+-   Francine: a, bc, acf, d, abeg
+
+    a, b, c, d, e, f, [ac]{style="color:red;"} (14/40=35%)
+
+## Let’s execute GPS algorithm
+
+-   With min support = 20%
+
+-   Chuck: a, abc, ac, de, cef
+
+-   Darlene: af, ab, acd, dabc, ef
+
+-   Egoberto: aef, ab, aceh, d, ae
+
+-   Francine: a, bc, acf, d, abeg
+
+    a, b, c, d, e, f, ac, ad, ae,
+
+## Let’s execute GPS algorithm
+
+-   With min support = 20%
+
+-   Chuck: [a]{style="color:red;"}, [a]{style="color:red;"}bc, ac, [d]{style="color:red;"}e, cef
+
+-   Darlene: af, ab, acd, dabc, ef
+
+-   Egoberto: aef, ab, aceh, d, ae
+
+-   Francine: a, bc, acf, d, abeg
+
+    a, b, c, d, e, f, ac, ad, ae, aad
+
+## Let’s execute GPS algorithm
+
+-   With min support = 20%
+
+-   Chuck: [a]{style="color:red;"}, abc, [a]{style="color:red;"}c, [d]{style="color:red;"}e, cef
+
+-   Darlene: af, ab, acd, dabc, ef
+
+-   Egoberto: aef, ab, aceh, d, ae
+
+-   Francine: a, bc, acf, d, abeg
+
+    a, b, c, d, e, f, ac, ad, ae, aad
+
+## Let’s execute GPS algorithm
+
+-   With min support = 20%
+
+-   Chuck: a, abc, ac, de, cef
+
+-   Darlene: [a]{style="color:red;"}f, [a]{style="color:red;"}b, ac[d]{style="color:red;"}, dabc, ef
+
+-   Egoberto: aef, ab, aceh, d, ae
+
+-   Francine: a, bc, acf, d, abeg
+
+    a, b, c, d, e, f, ac, ad, ae, aad
+
+## Let’s execute GPS algorithm
+
+-   With min support = 20%
+
+-   Chuck: a, abc, ac, de, cef
+
+-   Darlene: [a]{style="color:red;"}f, [a]{style="color:red;"}b, acd, [d]{style="color:red;"}abc, ef
+
+-   Egoberto: aef, ab, aceh, d, ae
+
+-   Francine: a, bc, acf, d, abeg
+
+    a, b, c, d, e, f, ac, ad, ae, aad
+
+## Let’s execute GPS algorithm
+
+-   With min support = 20%
+
+-   Chuck: a, abc, ac, de, cef
+
+-   Darlene: [a]{style="color:red;"}f, ab, [a]{style="color:red;"}cd, [d]{style="color:red;"}abc, ef
+
+-   Egoberto: aef, ab, aceh, d, ae
+
+-   Francine: a, bc, acf, d, abeg
+
+    a, b, c, d, e, f, ac, ad, ae, aad
+
+## Let’s execute GPS algorithm
+
+-   With min support = 20%
+
+-   Chuck: a, abc, ac, de, cef
+
+-   Darlene: af, ab, acd, dabc, ef
+
+-   Egoberto: [a]{style="color:red;"}ef, [a]{style="color:red;"}b, aceh, [d]{style="color:red;"}, ae
+
+-   Francine: a, bc, acf, d, abeg
+
+    a, b, c, d, e, f, ac, ad, ae, aad
+
+## Let’s execute GPS algorithm
+
+-   With min support = 20%
+
+-   Chuck: a, abc, ac, de, cef
+
+-   Darlene: af, ab, acd, dabc, ef
+
+-   Egoberto: [a]{style="color:red;"}ef, ab, [a]{style="color:red;"}ceh, [d]{style="color:red;"}, ae
+
+-   Francine: a, bc, acf, d, abeg
+
+    a, b, c, d, e, f, ac, ad, ae, aad
+
+## Let’s execute GPS algorithm
+
+-   With min support = 20%
+
+-   Chuck: a, abc, ac, de, cef
+
+-   Darlene: af, ab, acd, dabc, ef
+
+-   Egoberto: aef, ab, aceh, d, ae
+
+-   Francine: [a]{style="color:red;"}, bc, [a]{style="color:red;"}cf, [d]{style="color:red;"}, abeg
+
+    a, b, c, d, e, f, ac, ad, ae, aad
+
+## Let’s execute GPS algorithm
+
+-   With min support = 20%
+
+-   Chuck: a, abc, ac, de, cef
+
+-   Darlene: af, ab, acd, dabc, ef
+
+-   Egoberto: aef, ab, aceh, d, ae
+
+-   Francine: a, bc, acf, d, abeg
+
+    a, b, c, d, e, f, ac, ad, ae, aad, aae, ade
+
+## Let’s execute GPS algorithm
+
+-   From
+
+-   ac, ad, ae, aad, aae, ade
+
+-   To
+
+-   a ➔ c, a ➔ d, a ➔ e, a ➔ ad, a ➔ ae, ad ➔ e
+
+## Questions? Comments?
+
+## Other algorithms
+
+-   Free-Span
+
+-   Prefix-Span
+
+    -   Select sub-sets of data to search within
+
+-   Spade
+
+    -   Depth-first rather than breadth-first search
+
+-   Faster, but same basic idea as in GPS
+
+## Differential Sequence Mining(Kinnebrew et al., 2013)
+
+-   Compares the support for sequential patterns between two groups
+
+-   Such as high-performing and low-performing students
+
+-   To find the patterns that are much more common in one group than the other
+
+![](images/clipboard-1750608407.png)
+
+## Discovering concise pattern descriptions
+
+-   Some contemporary algorithms attempt to find groups of patterns that can be described concisely
+
+-   See review in Fournier-Viger et al. (2017)
+
+    -   Fournier-Viger, P., Lin, J. C. W., Kiran, R. U., Koh, Y. S., & Thomas, R. (2017). A survey of sequential pattern mining. Data Science and Pattern Recognition, 1(1), 54-77.
+
+## Process Mining
+
+-   Related algorithm
+
+-   Rather than just finding small, local patterns
+
+-   Tries to find overarching processes that occur over the course of a set of events, or tries to find discrepancies in approved processes
+
+    -   For example, do students’ self-regulatory processes over time match theoretical models? (Bannert et al., 2014)
+
+## Questions? Comments?

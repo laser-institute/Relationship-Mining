@@ -1,0 +1,276 @@
+---
+title: "Module 3: Sequential Pattern Mining"
+subtitle: "Case Study"
+author: "LASER Institute"
+date: today 
+format:
+  html:
+    toc: true
+    toc-depth: 4
+    toc-location: right
+theme:
+  light: simplex
+  dark: cyborg
+editor: visual
+jupyter: python3
+csl: apa/apa-6th-edition.csl
+bibliography: lit/references.bib
+---
+
+## Paper Review
+
+This case study is inspired by @zhou2023identifying. The paper’s method for sequential pattern mining is structured as a multi-step process that transforms raw submission log data into interpretable temporal patterns of group problem solving. Here’s a focused summary of their methodological approach:
+
+![](images/clipboard-671272911.png)
+
+**1. Submission Labeling**\
+Log data from an online assessment platform (PrairieLearn) is used to capture each “save and grade” event. The time interval between consecutive submissions is computed, and each submission is then classified into one of three categories:\
+• **Quick (Q):** Submission time below the 25th percentile.\
+• **Medium (M):** Submission time between the 25th and 75th percentiles.\
+• **Slow (S):** Submission time above the 75th percentile.\
+This classification is performed separately for each database query language and semester to adjust for varying conditions .
+
+**2. Sequence Compacting and Pattern Extraction**\
+To reduce noise and capture meaningful problem-solving behaviors, the authors introduce a sequence compacting algorithm with two rules:\
+• **Repetitive Compression:** Three or more consecutive identical labels are merged into a single event, under the assumption that such repetition is unlikely to occur by chance.\
+• **Consecutive Q/M Compacting:** Since mixed quick and medium attempts occur frequently, consecutive Q and M labels are compacted into a single representative pattern.\
+This process results in the formation of seven distinct pattern types (Q, Q.LNG, M, M.LNG, QM.LNG, S, S.LNG) that encapsulate key behavioral sequences .
+
+**3. Transition Analysis Using Sequential Pattern Mining**\
+After compacting, the focus shifts to understanding the transitions between the identified patterns. Two main analytic techniques are employed:\
+• **Clustering:** Agglomerative hierarchical clustering (using Ward’s method) is applied to group similar sequences. Although effective for shorter sequences, the approach faces challenges when sequences become longer.\
+• **Transition Metrics and Correlation:** The L\* metric is introduced to evaluate the probability of transitions between pattern types, adjusting for base rates by comparing observed transition frequencies to those expected by chance. This metric allows the researchers to identify which transitions (e.g., from S to M.LNG versus Q.LNG to S.LNG) are statistically significant indicators of either effective or struggling problem-solving behaviors .
+
+Together, these methods form a robust pipeline that transforms raw log data into interpretable temporal patterns, ultimately providing insights into group-level collaborative problem-solving strategies.
+
+## Python Activity
+
+### STEP 1: Generate Simulated Data
+
+You will simulate submission log data for several groups. Each entry includes a group ID and a submission timestamp (in seconds).
+
+```{python}
+import pandas as pd
+import numpy as np
+np.random.seed(0)
+data = []
+df= {}
+for group in range(1, 6):  # simulate 5 groups
+    # Generate 10 submission timestamps per group (in seconds) and sort them
+    times = np.sort(np.random.randint(30, 300, size=10))
+    for t in times:
+        data.append({'group_id': group, 'submission_time': t})
+df = pd.DataFrame(data)
+print("Synthetic submission data:")
+print(df)
+```
+
+### STEP 2: Compute Time Intervals Between Submissions
+
+```{python}
+df['time_diff'] = df.groupby('group_id')['submission_time'].diff().fillna(0)
+print("\nSubmission data with time differences:")
+print(df)
+```
+
+### STEP 3: Label Each Submission (Q, M, or S)
+
+Exclude the first submission (time_diff = 0) when calculating percentiles.
+
+```{python}
+time_diffs = df[df['time_diff'] > 0]['time_diff']
+q25 = np.percentile(time_diffs, 25)
+q75 = np.percentile(time_diffs, 75)
+print("\n25th percentile:", q25, "75th percentile:", q75)
+
+def label_submission(duration, q25, q75):
+    # Label submissions based on duration thresholds.
+    if duration == 0:
+        return 'Start'  # mark the first submission
+    if duration < q25:
+        return 'Q'      # Quick submission
+    elif duration < q75:
+        return 'M'      # Medium submission
+    else:
+        return 'S'      # Slow submission
+
+df['label'] = df['time_diff'].apply(lambda x: label_submission(x, q25, q75))
+print("\nSubmission data with labels:")
+print(df)
+```
+
+### STEP 4: Extract Submission Sequences Per Group
+
+Create a dictionary mapping each group to its sequence of labels (excluding the 'Start' label).
+
+```{python}
+group_sequences = {}
+for group, group_df in df.groupby('group_id'):
+    seq = list(group_df[group_df['label'] != 'Start']['label'])
+    group_sequences[group] = seq
+
+print("\nOriginal sequences for each group:")
+for group, seq in group_sequences.items():
+    print(f"Group {group}: {seq}")
+```
+
+### STEP 5: Sequence Compacting Function
+
+The function applies two rules: \# (1) Compress consecutive identical labels (if count \>= 3, mark as label.LNG) \# (2) Merge consecutive Q and M labels (if their sequence length \>= 3, mark as QM.LNG)
+
+```{python}
+def compact_sequence(seq):
+    # Rule 1: Compress consecutive identical labels
+    if not seq:
+        return []
+    
+    compacted = []
+    i = 0
+    while i < len(seq):
+        count = 1
+        # Count how many times the same label appears consecutively.
+        while i + count < len(seq) and seq[i + count] == seq[i]:
+            count += 1
+        if count >= 3:
+            compacted.append(seq[i] + ".LNG")
+        else:
+            compacted.extend([seq[i]] * count)
+        i += count
+
+    # Rule 2: Merge consecutive Q and M labels (that are not already marked as LNG)
+    final_seq = []
+    i = 0
+    while i < len(compacted):
+        # If the label is Q or M, start checking for a contiguous segment.
+        if compacted[i] in ['Q', 'M']:
+            j = i
+            temp = []
+            while j < len(compacted) and compacted[j] in ['Q', 'M']:
+                temp.append(compacted[j])
+                j += 1
+            if len(temp) >= 3:
+                final_seq.append("QM.LNG")
+            else:
+                final_seq.extend(temp)
+            i = j
+        else:
+            final_seq.append(compacted[i])
+            i += 1
+    return final_seq
+
+# Apply sequence compacting for each group.
+compacted_sequences = {}
+for group, seq in group_sequences.items():
+    compacted_sequences[group] = compact_sequence(seq)
+
+print("\nCompacted sequences for each group:")
+for group, seq in compacted_sequences.items():
+    print(f"Group {group}: {seq}")
+
+```
+
+### STEP 6: Compute Transition Counts Between Patterns
+
+For each compacted sequence, count transitions between consecutive patterns.
+
+```{python}
+def compute_transitions(seq):
+    transitions = {}
+    for i in range(len(seq) - 1):
+        transition = (seq[i], seq[i+1])
+        transitions[transition] = transitions.get(transition, 0) + 1
+    return transitions
+
+all_transitions = {}
+for group, seq in compacted_sequences.items():
+    all_transitions[group] = compute_transitions(seq)
+
+print("\nTransition counts for each group:")
+for group, trans in all_transitions.items():
+    print(f"Group {group}: {trans}")
+```
+
+### STEP 7: Aggregate Transitions and Compute Probabilities
+
+```{python}
+aggregate_counts = {}
+total_transitions = 0
+for trans in all_transitions.values():
+    for k, v in trans.items():
+        aggregate_counts[k] = aggregate_counts.get(k, 0) + v
+        total_transitions += v
+
+transition_probabilities = {k: v/total_transitions for k, v in aggregate_counts.items()}
+print("\nAggregate transition probabilities:")
+for k, v in transition_probabilities.items():
+    print(f"{k} : {v:.2f}")
+```
+
+```{python}
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from scipy.cluster.hierarchy import linkage, dendrogram
+
+# ------------------------------
+# Step A: Build Transition Frequency Matrix
+# ------------------------------
+# 1. Identify all unique transitions from all groups.
+all_possible_transitions = set()
+for group, trans_dict in all_transitions.items():
+    for trans in trans_dict.keys():
+        all_possible_transitions.add(trans)
+all_possible_transitions = sorted(all_possible_transitions)  # Sort for consistency
+
+# 2. Build a DataFrame: rows = groups, columns = transitions.
+# We'll use the normalized frequency (count divided by total transitions for that group) 
+# so that groups with different numbers of submissions are comparable.
+group_ids = list(all_transitions.keys())
+data_matrix = []
+for group in group_ids:
+    group_counts = []
+    total = sum(all_transitions[group].values())
+    for trans in all_possible_transitions:
+        count = all_transitions[group].get(trans, 0)
+        freq = count / total if total > 0 else 0
+        group_counts.append(freq)
+    data_matrix.append(group_counts)
+
+# Use a more readable column naming format, e.g., "Q->M" for a transition from Q to M.
+transition_columns = [f"{src}->{dst}" for src, dst in all_possible_transitions]
+transition_df = pd.DataFrame(data_matrix, index=group_ids, columns=transition_columns)
+print("Transition Frequency DataFrame:")
+print(transition_df)
+
+# ------------------------------
+# Step B: Hierarchical Clustering
+# ------------------------------
+linked = linkage(transition_df, method='ward')
+
+plt.figure(figsize=(10, 5))
+dendrogram(linked, labels=transition_df.index.astype(str))
+plt.title("Hierarchical Clustering Dendrogram of Groups")
+plt.xlabel("Group ID")
+plt.ylabel("Ward Distance")
+plt.show()
+
+# ------------------------------
+# Step C: Correlation Analysis of Transitions
+# ------------------------------
+# Compute the Pearson correlation among transition frequencies across groups.
+correlation_matrix = transition_df.corr(method='pearson')
+print("\nCorrelation Matrix of Transitions:")
+print(correlation_matrix)
+
+plt.figure(figsize=(10, 8))
+sns.heatmap(correlation_matrix, annot=True, cmap="coolwarm")
+plt.title("Correlation Matrix of Transition Frequencies")
+plt.show()
+```
+
+## Notes
+
+As a side note, please note that although this approach is definitely sequential pattern mining, it's not the most common form of sequential pattern mining used in the field. An approach more similar to the association rule mining approach (but only considering patterns spanning time) is more often used in the field; we present this example as an alternative, to give you a sense of the range of methods being used for relationship mining in the field.
+
+## Reference
